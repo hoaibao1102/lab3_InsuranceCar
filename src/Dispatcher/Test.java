@@ -28,6 +28,23 @@ public class Test {
         // Biến kiểm tra nếu có thay đổi chưa lưu
         boolean unsavedChanges = false;
         
+        Car newC = ndl.inputCarInfo(false,carList);
+                        carList.addNew(newC);
+                        System.out.println("Registered successfully");
+            
+                        String choiceSave = ndl.getString("Are you  want to save this registration? (Y/N): ");
+                        if (choiceSave.trim().toUpperCase().equals("Y")) {
+                            carList.saveToFileCarInfo();
+                            System.out.println("The registration has been successfully save in file [carInfo.dat].");
+                            unsavedChanges = false;
+                        } else {
+                            System.out.println("Car save canceled. Returning to main menu.");
+                            unsavedChanges = true;
+                        }
+
+                        
+        String carLicense = ndl.getString("Enter the license plate number of the car they want to search for: ");
+        Car car = carList.searchCarByLicense(carLicense);
         
        
        

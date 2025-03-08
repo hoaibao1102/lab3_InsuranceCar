@@ -13,8 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +21,7 @@ import java.util.logging.Logger;
  *
  * @author MSI PC
  */
-public class CarManager extends ArrayList<Car>{
+public class CarManager extends HashMap<String, Car>{
     private String pathFile;
     private boolean save;
     private final String HEADER_TABLE = ("------------------------------------------------------------------------\n"),
@@ -40,45 +39,32 @@ public class CarManager extends ArrayList<Car>{
     }
     
     public void addNew(Car newCar){
-        this.add(newCar);
+        this.put(newCar.getLicensePlate(),newCar);
         this.save = false;
     }
     
-    public boolean checkExistCar(String licenseInput){
-        return searchCarByLicense(licenseInput) != null;
-    }
-    
+   
     
     // tìm car bằng biển số xe
     public Car searchCarByLicense(String licensePlateInput){
-        Car newCar = null;
-        for (Car i : this) {
-            if (i.getLicensePlate().toLowerCase().trim().equalsIgnoreCase(licensePlateInput.toLowerCase().trim())) {
-                newCar = i;
-            }
-        }
-        return newCar;
+        Car searchCar = null;
+        searchCar =  this.get(licensePlateInput.trim().toUpperCase());
+        return searchCar;
     }
     
     /**
      * @param licensePlateInput 
      * tìm kiếm và in ra xe tìm được khi nhập license plate
      */
-    public void searchCar(String licensePlateInput){
-        List<Car> matching = new ArrayList();
-        for (Car i : this) {
-            if(i == searchCarByLicense(licensePlateInput)){
-                matching.add(i);
-            }
+    public void searchCar(String licensePlateInput) {
+        Car car = searchCarByLicense(licensePlateInput);
+        if (car != null) {
+            display(car);                                                       
+        } else {
+            System.out.println("No car matches the search criteria!");
         }
-        if(matching == null){
-            System.out.println("No one matches the search criteria!");
-        }else{
-            display(matching);
-        }
-        
     }
-    
+
     public void updateInfoCar(Car newCar){
         Car oldCar = searchCarByLicense(newCar.getLicensePlate());
         if (oldCar == null) {
@@ -93,20 +79,18 @@ public class CarManager extends ArrayList<Car>{
     } 
     
     public void deleteCarByLicense(Car carDelete) {
-        this.remove(carDelete);
+        this.remove(carDelete.getLicensePlate());
         this.save = false;
     }
     
     public void display(){
-        display(this);
+        this.values().forEach(this::display);
     }
     
-    public void display(List<Car> a){
+    public void display(Car car){
         System.out.println(HEADER_TABLE);
-        for (Car car : a) {
-            System.out.println(car);
-            System.out.print(FOOTER_TABLE);
-        }
+        System.out.println(car);
+        System.out.print(FOOTER_TABLE);
     }
     
     
@@ -124,11 +108,10 @@ public class CarManager extends ArrayList<Car>{
             //3.tạo đối tương output để tuần tự hóa dữ liệu
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-            //4.ghi dữ liệu tuần tự hóa vào file
-            for (Car i : this) {
-                oos.writeObject(i);
+            // Ghi các đối tượng Car vào file
+            for (Car c : this.values()) {  // Lưu trữ từng đối tượng Car trong HashMap
+                oos.writeObject(c);  // Ghi đối tượng Car vào file
             }
-
             // sau khi ghi xong thì đóng lại và lưu lại
             oos.close();
             this.save = true;
@@ -167,8 +150,8 @@ public class CarManager extends ArrayList<Car>{
             
             //cho đọc dữ liệu
             while(fis.available() > 0){
-                Car c = (Car)ois.readObject();
-                this.add(c);
+                Car c = (Car) ois.readObject();
+                this.put(c.getLicensePlate().toUpperCase(),c);
             }
             
             //sau khi đọc xong thì đóng và lưu lại

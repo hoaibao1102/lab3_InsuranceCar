@@ -89,9 +89,9 @@ public class Car implements Serializable{
 
     public String setRegistrationPlace() {
         char a = getLicensePlate().trim().charAt(2);
-        String registrationPlace ="";
+        String registrationPlace = "";
         switch (a) {
-            case 'X' :
+            case 'X':
                 registrationPlace = "Thu Duc";
                 break;
             case 'S':
@@ -101,9 +101,60 @@ public class Car implements Serializable{
                 registrationPlace = "District 1";
                 break;
             case 'V':
-               registrationPlace = "Go Vap";
-               break;
-        }       
+                registrationPlace = "Go Vap";
+                break;
+            case 'Q':
+                registrationPlace = "District 3";
+                break;
+            case 'D':
+                registrationPlace = "District 4";
+                break;
+            case 'N':
+                registrationPlace = "District 5";
+                break;
+            case 'P':
+                registrationPlace = "Phu Nhuan";
+                break;
+            case 'B':
+                registrationPlace = "Binh Tan";
+                break;
+            case 'H':
+                registrationPlace = "Hoc Mon";
+                break;
+            case 'C':
+                registrationPlace = "Cu Chi";
+                break;
+            case 'G':
+                registrationPlace = "Go Vap";
+                break;
+            case 'F':
+                registrationPlace = "District 10";
+                break;
+            case 'E':
+                registrationPlace = "District 11";
+                break;
+            case 'K':
+                registrationPlace = "District 2";
+                break;
+            case 'L':
+                registrationPlace = "District 7";
+                break;
+            case 'M':
+                registrationPlace = "Tan Phu";
+                break;
+            case 'U':
+                registrationPlace = "District 9";
+                break;
+            case 'Y':
+                registrationPlace = "Tan Binh";
+                break;
+            case 'Z':
+                registrationPlace = "Binh Chanh";
+                break;
+            default:
+                registrationPlace = "Unknown"; // Xử lý các trường hợp khác
+                break;
+        }
         return this.registrationPlace = registrationPlace;
     }
 

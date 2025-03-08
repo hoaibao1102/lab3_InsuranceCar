@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
  */
 public interface Acceptable {
 
-    public final String LICENSE_PLATE_VALID = "^(5[0-9])[pPsSxXtTvV]\\d{1}\\d{5}$";
+    public final String LICENSE_PLATE_VALID = "^(5[0-9])[bBcCdDeEfFgGhHkKlLmMnNpPsStTuUvVxXyYzZ]\\d{1}\\d{5}$";
     public final String OWNER_NAME_VALID = "^.{2,20}$";
     public final String PHONE_VALID = "^(0[3|5|7|8|9])+([0-9]{8})$";
     public final String DOUBLE_VALID = "^\\d+.?\\d*$";

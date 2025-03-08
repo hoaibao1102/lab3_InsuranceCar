@@ -86,12 +86,15 @@ public class Inputter {
             String license;
             boolean check = false;
             do {
-                license = inputAndLoop("License Plate (Format: 50-59 + District Code (P/S/X/T/V) + Digit 1-9 + 5 digits): ", Acceptable.LICENSE_PLATE_VALID, isUpdate, false);
-                x.setLicensePlate(license);
-                if (s.checkExistCar(x.getLicensePlate())) {
+                System.out.println("Note: The license plate format should be 50-59 + District Code (1 letter) + 1 digit + 5 digits.");
+                license = inputAndLoop("Enter the license plate: ", Acceptable.LICENSE_PLATE_VALID, isUpdate, false);
+                x.setLicensePlate(license.toUpperCase());
+                if (s.searchCarByLicense(x.getLicensePlate()) != null) {
                     System.out.println("The License Plate already exists in the list.");
                     check = true;
-                }else check = false;
+                } else {
+                    check = false;
+                }
             } while (check);
         }
 
@@ -124,11 +127,13 @@ public class Inputter {
         String id;
         do {
             id = inputAndLoop("Insurance ID (4 characters, unique): ", Acceptable.INSURANCE_ID_VALID, false, false);
-            if (i.checkExistId(id)) {
-                System.out.println("This Insurance ID is already exist.");
+            id = id.trim().toUpperCase();  // Loại bỏ khoảng trắng thừa và chuyển thành chữ hoa
+            // Kiểm tra nếu ID đã tồn tại trong InsuranceManager
+            if (i.containsKey(id)) {
+                System.out.println("This Insurance ID already exists. Please choose a different one.");
             }
-        } while (i.checkExistId(id));
-        insurance.setInsuId(id);
+        } while (i.containsKey(id));  // Nếu ID đã tồn tại, yêu cầu nhập lại
+        insurance.setInsuId(id);  // Lưu ID vào đối tượng insurance
 
         // Nhập License Plate (phải tồn tại và chưa có bảo hiểm)
         Car car;

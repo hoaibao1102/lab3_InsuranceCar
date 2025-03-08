@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  *
  * @author MSI PC
  */
-public class InsuranceManager extends ArrayList<Insurance>{
+public class InsuranceManager extends HashMap<String, Insurance>{
     private String pathFile;
     private boolean save;
     private final String HEADER_TABLE = ("====================================================================================================="),
@@ -41,11 +41,11 @@ public class InsuranceManager extends ArrayList<Insurance>{
     }
     
     //HÀM 5
-    public void addNewContract(Insurance newIn){
-        this.add(newIn);
-        this.save = false;
-        
+    public void addNewContract(Insurance newIn) {
+            // Thêm vào hệ thống nếu ID chưa tồn tại
+            this.put(newIn.getInsuId(), newIn);
     }
+    
     
     /***
      * kiểm tra id đưa vào có tồn tại không
@@ -53,17 +53,6 @@ public class InsuranceManager extends ArrayList<Insurance>{
      * @param idInput
      * @return 
      */
-    public boolean checkExistId(String idInput) {
-        boolean result = false;
-        String normalizedIdInput = idInput.toUpperCase().trim();  
-        for (Insurance thi : this) {
-            if (thi.getInsuId().toUpperCase().trim().equals(normalizedIdInput)) {
-                result = true; 
-            }
-        }
-        return result; 
-    }
-
     
     public String generateContractId() {
         return String.valueOf(this.size()+1);
@@ -77,8 +66,8 @@ public class InsuranceManager extends ArrayList<Insurance>{
      */
     public boolean isCarInsured(String licensePlate) {
         boolean result = false;
-        for (Insurance i : this) {
-            if(i.getLicensePlate().toUpperCase().equalsIgnoreCase(licensePlate.toUpperCase())){
+        for (Insurance value : this.values()) {
+            if(value.getLicensePlate().equalsIgnoreCase(licensePlate)){
                 result = true;
             }
         }
@@ -121,7 +110,7 @@ public class InsuranceManager extends ArrayList<Insurance>{
         if (!year.matches("^\\d{4}$")) {
             System.out.println("Invalid year format! Please enter a 4-digit year.");
         }else{
-            for (Insurance i : this) {
+            for (Insurance i : this.values()) {
                 if(i.getEstablishDate().contains(year)){
                     match.add(i);
                 }
@@ -162,7 +151,6 @@ public class InsuranceManager extends ArrayList<Insurance>{
     }
     
     
-    
     //HÀM 7
     
     /**
@@ -181,10 +169,10 @@ public class InsuranceManager extends ArrayList<Insurance>{
         // Tạo danh sách xe chưa có bảo hiểm
         List<Car> uninsuredCars = new ArrayList<>();
         HashMap<String, Boolean> checkedCars = new HashMap<>();
-        for (Car car : c) {
+        for (Car car : c.values()) {
             if (!checkedCars.containsKey(car.getLicensePlate().toLowerCase().trim())) { // Nếu chưa kiểm tra xe này
                 boolean existC = false;
-                for (Insurance ins : this) {
+                for (Insurance ins : this.values()) {
                     if (ins.getLicensePlate().equalsIgnoreCase(car.getLicensePlate())) {
                         existC = true;
                         break;
@@ -241,10 +229,12 @@ public class InsuranceManager extends ArrayList<Insurance>{
 
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-            for (Insurance i : this) {
-                oos.writeObject(i);
+            
+            // Ghi các đối tượng insurance vào file
+            for (Insurance in : this.values()) {  // Lưu trữ từng đối tượng insurance trong HashMap
+                oos.writeObject(in);  // Ghi đối tượng Car vào file
             }
-
+            
             oos.close();
             this.save = true;
         } catch (FileNotFoundException ex) {
@@ -277,7 +267,7 @@ public class InsuranceManager extends ArrayList<Insurance>{
             
             while(fis.available() > 0){
                 Insurance x = (Insurance)ois.readObject();
-                this.add(x);
+                this.put(x.getLicensePlate(),x);
             }
             ois.close();
             this.save = true;

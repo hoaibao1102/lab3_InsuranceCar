@@ -45,13 +45,13 @@ public class Main {
                 case 1:
                     do {
                         Car newC = ndl.inputCarInfo(false,carList);
-                        carList.add(newC);
+                        carList.addNew(newC);
+                        System.out.println("Registered successfully");
             
                         String choiceSave = ndl.getString("Are you  want to save this registration? (Y/N): ");
                         if (choiceSave.trim().toUpperCase().equals("Y")) {
                             carList.saveToFileCarInfo();
                             System.out.println("The registration has been successfully save in file [carInfo.dat].");
-                            System.out.println("Registered successfully");
                             unsavedChanges = false;
                         } else {
                             System.out.println("Car save canceled. Returning to main menu.");
@@ -123,11 +123,18 @@ public class Main {
                     break;
                     
                 case 4:
-                    String carDelete = ndl.getString("Enter the License plate of car which you want to delete: ");
-                    Car carExist2 = carList.searchCarByLicense(carDelete);
-                    if(carExist2 != null){
-                        carList.searchCar(carDelete);
-                    }
+                    Car carExist2 = new Car();
+                    
+                    do {       
+                        String carDelete = ndl.getString("Enter the License plate of car which you want to delete: ");
+                        carExist2 = carList.searchCarByLicense(carDelete);
+                        if(carExist2 == null){
+                            System.out.println(" car not exist");
+                        }else{
+                            carList.searchCar(carDelete);
+                        }
+                    } while (carExist2 == null);
+                    
                     String choiceDelete = ndl.getString("Are you sure you want to delete this registration? (Y/N): ");
                     if(choiceDelete.trim().toUpperCase().equals("Y")){
                         carList.deleteCarByLicense(carExist2);
@@ -151,7 +158,7 @@ public class Main {
                 case 5:
                     do {
                         Insurance newI = ndl.inputInsuranceInfo(insuranceList,carList);
-                        insuranceList.add(newI);
+                        insuranceList.addNewContract(newI);
                         System.out.println("Registered successfully");
                         System.out.println();
                         String choiceSave = ndl.getString("Are you  want to save this registration? (Y/N): ");
@@ -188,46 +195,53 @@ public class Main {
                     break;
                     
                 case 8:
-                    int choiceSave = ndl.getInt("Choose which data to save:\n"
-                            + " 1. Save customer data.\n"
-                            + " 2. Save order data. \n"
-                            + " 3. Save both.   \n"
-                            + " 4. Do not save.  \n"
-                            + "Enter your choice (1, 2, 3, or 4):  ");
+                    boolean choiceSmall = false;
+                    do {
+                        int choiceSave = ndl.getInt("Choose which data to save:\n"
+                                + " 1. Save customer data.\n"
+                                + " 2. Save order data. \n"
+                                + " 3. Save both.   \n"
+                                + " 4. Do not save.  \n"
+                                + "Enter your choice (1, 2, 3, or 4):  ");
 
-                    switch (choiceSave) {
-                        case 1:
-                            carList.saveToFileCarInfo();
-                            System.out.println("Registration data has been successfully saved to `carInfo.dat`");
-                            break;
-                        case 2:
-                            insuranceList.saveToFileInsurance();
-                            System.out.println("Registration data has been successfully saved to `insurances.dat`");
-                            break;
-                        case 3:
-                            carList.saveToFileCarInfo();
-                            insuranceList.saveToFileInsurance();
-                            System.out.println("Saved both files");
-                            unsavedChanges = false;
-                            break;
-                        case 4:
-                            System.out.println("No data saved.");
-                            break;
-                        default:
-                            System.out.println("Invalid choice. Please try again.");
-                            break;
-                    }
+                        switch (choiceSave) {
+                            case 1:
+                                carList.saveToFileCarInfo();
+                                System.out.println("Registration data has been successfully saved to `carInfo.dat`");
+                                break;
+                            case 2:
+                                insuranceList.saveToFileInsurance();
+                                System.out.println("Registration data has been successfully saved to `insurances.dat`");
+                                break;
+                            case 3:
+                                carList.saveToFileCarInfo();
+                                insuranceList.saveToFileInsurance();
+                                System.out.println("Saved both files [carInfo.dat] and [insurances.dat] ");
+                                unsavedChanges = false;
+                                break;
+                            case 4:
+                                System.out.println("No data saved.");
+                                break;
+                            default:
+                                System.out.println("Invalid choice. Please try again.");
+                                choiceSmall = true;
+                                break;
+                        }
+                    } while (choiceSmall);
+
                     System.out.println();
                     break;
 
                 case 9:
                     // Nếu người dùng chọn thoát, kiểm tra xem có thay đổi chưa lưu không
                     if (unsavedChanges) {
-                        String response = ndl.getString("You have unsaved changes. Are you sure you want to exit without saving? \n"
+                        String response = ndl.getString("You have unsaved changes. Do you want to save before exiting? \n"
                                                       + "  [1] YES     [2]NO\n"
                                                       + "ENTER YOUR CHOICE: ");
                         if (response.equalsIgnoreCase("1")) {
-                            System.out.println("Exiting without saving.");
+                            carList.saveToFileCarInfo();
+                            insuranceList.saveToFileInsurance();
+                            System.out.println("Exiting with saving.");
                             break; // Thoát chương trình
                         } else if (response.equalsIgnoreCase("2")) {
                             System.out.println("Exiting the program....");
